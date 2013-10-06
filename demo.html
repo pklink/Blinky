@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title></title>
+    <title>defaulty</title>
+    <!-- defaulty 0.2.1 -->
     <link rel="stylesheet" href="css/normalize.css" />
     <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="js/chance.min.js"></script>
@@ -14,57 +15,67 @@
 
     function Defaulty() {
         this.container        = $('<div />');
-        this.normalWidth      = 0;
-        this.lastElementWidth = 1;
+        this.length           = 0;
         this.elements         = [];
         this.divider          = chance.natural({ min: 5, max: 50 });
+        this.difference       = 0;
 
         this.init();
 
     }
 
-    Defaulty.prototype.calculateNormalWidth = function() {
-        this.normalWidth = Math.round($(window).width() / this.divider);
-    }
 
-    Defaulty.prototype.calculateLastElementWidth = function() {
-        this.lastElementWidth = $(window).width() - this.normalWidth * (this.divider - 1);
-    }
+    Defaulty.prototype.calculateLength = function() {
+        var width = $(window).width();
 
+        this.length     = Math.ceil(width / this.divider);
+        this.difference = this.length * this.divider - width;
 
-
-    Defaulty.prototype.init = function() {
-        this.container.prependTo($('body'));
-        this.calculateNormalWidth();
-        this.calculateLastElementWidth();
-
-        // create some elements
-        var numberOfElements = Math.ceil($(window).height() / this.normalWidth) * this.divider - 1;
-
-        for (var i = 0; i <= numberOfElements; i++) {
-            var usedWidth;
-
-            if ( (i + 1) % this.divider == 0) {
-                usedWidth = this.lastElementWidth;
-            } else {
-                usedWidth = this.normalWidth
-            }
-
-            // save element
-            var element = new Element(usedWidth, this.normalWidth);
-            element.element.appendTo(this.container);
-            this.elements.push(element);
+        if (this.difference > this.length) {
+            this.divider   += 1;
+            this.calculateLength();
         }
     }
 
 
+    Defaulty.prototype.init = function() {
+        this.calculateLength();
+
+        // create some elements
+        var numberOfElements = Math.ceil($(window).height() / this.length) * this.divider - 1;
+
+        for (var i = 0; i <= numberOfElements; i++) {
+            var isLastElement = false;
+
+            if ( (i + 1) % this.divider == 0) {
+                isLastElement = true;
+            }
+
+            // create element
+            var last    = this.elements[i-1];
+            var element = new Element(this.length, this.length);
+
+            // correct width
+            if (isLastElement) {
+                element.setWidth(this.length - this.difference);
+            }
+
+
+            element.element.appendTo(this.container);
+            this.elements.push(element);
+        }
+
+        this.container.prependTo($('body'));
+    }
+
+
     function Element(width, height) {
-        this.width    = width;
-        this.height   = height;
+        this._width    = width;
+        this._height   = height;
         this.element  = $('<div />')
                 .addClass('item')
-                .width(this.width)
-                .height(this.height)
+                .width(this._width)
+                .height(this._height)
                 .css('cursor', 'pointer')
                 .css('float', 'left')
         ;
@@ -80,9 +91,17 @@
         }, this));
     }
 
+
+    Element.prototype.setWidth = function(width) {
+        this._width = width;
+        this.element.width(width);
+    }
+
+
     Element.prototype.changeBackgroundColor = function() {
         this.element.css('backgroundColor', chance.color());
     }
+
 
     new Defaulty();
 
