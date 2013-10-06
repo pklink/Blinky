@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/default.css" />
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/chance.min.js"></script>
+</head>
+<body>
+
+
+<script type="text/javascript">
+
+    function Defaulty() {
+        this.container        = $('<div />');
+        this.normalWidth      = 0;
+        this.lastElementWidth = 1;
+        this.elements         = []
+
+        this.init();
+
+    }
+
+    Defaulty.prototype.calculateNormalWidth = function() {
+        this.normalWidth = Math.round($(window).width() / 10);
+    }
+
+    Defaulty.prototype.calculateLastElementWidth = function() {
+        this.lastElementWidth = $(window).width() - this.normalWidth * 9;
+    }
+
+
+
+    Defaulty.prototype.init = function() {
+        this.container.prependTo($('body'));
+        this.calculateNormalWidth();
+        this.calculateLastElementWidth();
+
+        // create some elements
+        var numberOfElements = chance.integer({min: 100, max: 150});
+
+        for (var i = 0; i <= numberOfElements; i++) {
+            var usedWidth;
+
+            if ( (i + 1) % 10 == 0) {
+                usedWidth = this.lastElementWidth;
+            } else {
+                usedWidth = this.normalWidth
+            }
+
+            // save element
+            var element = new Element(usedWidth, this.normalWidth);
+            element.element.appendTo(this.container);
+            this.elements.push(element);
+        }
+    }
+
+
+    function Element(width, height) {
+        this.width    = width;
+        this.height   = height;
+        this.element  = $('<div />')
+                .addClass('item')
+                .width(this.width)
+                .height(this.height)
+                .css('cursor', 'pointer')
+        ;
+
+        // change background color
+        this.changeBackgroundColor();
+
+        // click listener
+        this.element.click($.proxy(function() {
+            this.changeBackgroundColor();
+        }, this));
+    }
+
+    Element.prototype.changeBackgroundColor = function() {
+        this.element.css('backgroundColor', chance.color());
+    }
+
+    new Defaulty();
+
+</script>
+
+</body>
+</html>
