@@ -16,18 +16,19 @@
         this.container        = $('<div />');
         this.normalWidth      = 0;
         this.lastElementWidth = 1;
-        this.elements         = []
+        this.elements         = [];
+        this.divider          = chance.natural({ min: 5, max: 50 });
 
         this.init();
 
     }
 
     Defaulty.prototype.calculateNormalWidth = function() {
-        this.normalWidth = Math.round($(window).width() / 10);
+        this.normalWidth = Math.round($(window).width() / this.divider);
     }
 
     Defaulty.prototype.calculateLastElementWidth = function() {
-        this.lastElementWidth = $(window).width() - this.normalWidth * 9;
+        this.lastElementWidth = $(window).width() - this.normalWidth * (this.divider - 1);
     }
 
 
@@ -38,12 +39,12 @@
         this.calculateLastElementWidth();
 
         // create some elements
-        var numberOfElements = chance.integer({min: 100, max: 150});
+        var numberOfElements = Math.ceil($(window).height() / this.normalWidth) * this.divider - 1;
 
         for (var i = 0; i <= numberOfElements; i++) {
             var usedWidth;
 
-            if ( (i + 1) % 10 == 0) {
+            if ( (i + 1) % this.divider == 0) {
                 usedWidth = this.lastElementWidth;
             } else {
                 usedWidth = this.normalWidth
@@ -70,6 +71,8 @@
 
         // change background color
         this.changeBackgroundColor();
+
+        setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
 
         // click listener
         this.element.click($.proxy(function() {
