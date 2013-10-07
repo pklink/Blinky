@@ -104,7 +104,7 @@ function Element(width, height) {
     this.changeBackgroundColor();
 
     // set inverval for changing background color
-    //setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
+    setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
 
     // click listener
     this.jq.click($.proxy(function() {
@@ -118,3 +118,11 @@ Element.prototype.changeBackgroundColor = function() {
 }
 
 
+// register Blinky as jQuery plugin
+$.fn.extend({
+    blinky: function(options) {
+        options = $.extend(options, { target: this });
+        new Blinky(options);
+        return this;
+    }
+});
