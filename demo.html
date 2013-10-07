@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>defaulty</title>
-    <!-- defaulty 0.3 -->
+    <!-- defaulty 1.0 -->
     <link rel="stylesheet" href="css/normalize.css" />
     <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="js/chance.min.js"></script>
@@ -24,12 +24,14 @@
         this._widthDifferenceInPixel  = 0;
         this._heightDifferenceInPixel = 0;
 
-        this.init();
+        this.draw();
+
+        $(window).resize($.proxy(this.draw, this));
     }
 
 
     Defaulty.prototype.calculateLength = function() {
-        var width  = $(window).width();
+        var width  = $('body').width();
         var height = $(window).height();
 
         this._lengthOfElementInPixel  = Math.ceil(width / this.numberOfColumns);
@@ -44,8 +46,17 @@
     }
 
 
-    Defaulty.prototype.init = function() {
+    Defaulty.prototype.draw = function() {
         this.calculateLength();
+
+        // remove elements
+        if (this._elements.length > 0) {
+            $(this._elements).each(function(index, el) {
+                el.jq.remove();
+            });
+
+            this._elements = [];
+        }
 
         // create some elements
         var numberOfElements = this._numberOfRows * this.numberOfColumns;
