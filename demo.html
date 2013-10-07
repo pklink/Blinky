@@ -13,20 +13,32 @@
 
 <script type="text/javascript">
 
-    function Defaulty() {
-        this.container              = $('<div />');
-        this.numberOfColumns        = chance.natural({ min: 5, max: 50 });
+    function Defaulty(options) {
+        // default options
+        var defaults = {
+            target:          $('body'),
+            numberOfColumns: chance.natural({ min: 5, max: 50 })
+        }
 
-        // private
+        // merge given options with the defaults
+        $.extend(defaults, options);
+
+        // set options to properties
+        this.target          = defaults.target;
+        this.numberOfColumns = defaults.numberOfColumns;
+
+        // private properties
         this._elements                = [];
         this._numberOfRows            = 0;
         this._lengthOfElementInPixel  = 0;
         this._widthDifferenceInPixel  = 0;
         this._heightDifferenceInPixel = 0;
 
+        // draw rectangles
         this.draw();
 
-        $(window).resize($.proxy(this.draw, this));
+        // add listener for resize-event to target
+        this.target.resize($.proxy(this.draw, this));
     }
 
 
@@ -86,11 +98,9 @@
                 element.jq.height(this._lengthOfElementInPixel - this._heightDifferenceInPixel);
             }
 
-            element.jq.appendTo(this.container);
+            element.jq.appendTo(this.target);
             this._elements.push(element);
         }
-
-        this.container.prependTo($('body'));
     }
 
 
@@ -109,7 +119,7 @@
         this.changeBackgroundColor();
 
         // set inverval for changing background color
-        setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
+        //setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
 
         // click listener
         this.jq.click($.proxy(function() {
@@ -123,7 +133,12 @@
     }
 
 
-    new Defaulty();
+    new Defaulty({
+        //target: $('#target'),
+        //numberOfColumns: 5
+    });
+
+
 
 </script>
 
