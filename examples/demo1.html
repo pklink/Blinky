@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Blinky</title>
+    <!-- Blinky 1.1 -->
+    <script type="text/javascript" src="libs/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="libs/chance.min.js"></script>
+    <script type="text/javascript" src="../jquery.blinky.js"></script>
+</head>
+<body>
+
+<h2>Default</h2>
+<div id="target1" style="width: 500px; height: 250px"></div>
+<script type="text/javascript">
+    $('#target1').blinky();
+</script>
+
+
+<h2>With fixed value of columns</h2>
+<div id="target2" style="width: 500px; height: 250px"></div>
+<script type="text/javascript">
+    $('#target2').blinky({
+        numberOfColumns: 5
+    });
+</script>
+
+
+<h2>Resizing every second</h2>
+<div id="target3" style="width: 500px; height: 250px"></div>
+<script type="text/javascript">
+    $('#target3').blinky();
+    setInterval(function() {
+        $('#target3').width(chance.natural({min: 150, max: 600}));
+    }, 1000);
+</script>
+
+
+</body>
+</html>

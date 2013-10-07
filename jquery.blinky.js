@@ -28,8 +28,8 @@ function Blinky(options) {
 
 
 Blinky.prototype.calculateLength = function() {
-    var width  = $('body').width();
-    var height = $(window).height();
+    var width  = this.target.width();
+    var height = this.target.height();
 
     this._lengthOfElementInPixel  = Math.ceil(width / this.numberOfColumns);
     this._widthDifferenceInPixel  = this._lengthOfElementInPixel * this.numberOfColumns - width;
@@ -121,8 +121,11 @@ Element.prototype.changeBackgroundColor = function() {
 // register Blinky as jQuery plugin
 $.fn.extend({
     blinky: function(options) {
-        options = $.extend(options, { target: this });
-        new Blinky(options);
+        this.each(function() {
+            options = $.extend(options, { target: $(this) });
+            new Blinky(options);
+        });
+
         return this;
     }
 });
