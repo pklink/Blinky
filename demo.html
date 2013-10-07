@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>defaulty</title>
-    <!-- defaulty 1.0 -->
+    <title>Blinky</title>
+    <!-- Blinky 1.1 -->
     <link rel="stylesheet" href="css/normalize.css" />
     <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="js/chance.min.js"></script>
@@ -13,7 +13,7 @@
 
 <script type="text/javascript">
 
-    function Defaulty(options) {
+    function Blinky(options) {
         // default options
         var defaults = {
             target:          $('body'),
@@ -42,7 +42,7 @@
     }
 
 
-    Defaulty.prototype.calculateLength = function() {
+    Blinky.prototype.calculateLength = function() {
         var width  = $('body').width();
         var height = $(window).height();
 
@@ -58,7 +58,7 @@
     }
 
 
-    Defaulty.prototype.draw = function() {
+    Blinky.prototype.draw = function() {
         this.calculateLength();
 
         // remove elements
@@ -133,7 +133,7 @@
     }
 
 
-    new Defaulty({
+    new Blinky({
         //target: $('#target'),
         //numberOfColumns: 5
     });
