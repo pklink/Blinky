@@ -1,8 +1,11 @@
+'use strict'
+
 function Blinky(options) {
     // default options
     var defaults = {
         target:          $('body'),
-        numberOfColumns: chance.natural({ min: 5, max: 50 })
+        numberOfColumns: chance.natural({ min: 5, max: 50 }),
+        blinking:        true
     }
 
     // merge given options with the defaults
@@ -11,6 +14,7 @@ function Blinky(options) {
     // set options to properties
     this.target          = defaults.target;
     this.numberOfColumns = defaults.numberOfColumns;
+    this.blinking        = defaults.blinking;
 
     // private properties
     this._elements                = [];
@@ -71,7 +75,7 @@ Blinky.prototype.draw = function() {
         }
 
         // create element
-        var element = new Element(this._lengthOfElementInPixel, this._lengthOfElementInPixel);
+        var element = new Element(this._lengthOfElementInPixel, this._lengthOfElementInPixel, this.blinking);
 
         // correct width
         if (isLastColumn) {
@@ -89,7 +93,7 @@ Blinky.prototype.draw = function() {
 }
 
 
-function Element(width, height) {
+function Element(width, height, blinking) {
     this._width    = width;
     this._height   = height;
     this.jq  = $('<div />')
@@ -104,7 +108,9 @@ function Element(width, height) {
     this.changeBackgroundColor();
 
     // set inverval for changing background color
-    setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
+    if (blinking) {
+        setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
+    }
 
     // click listener
     this.jq.click($.proxy(function() {

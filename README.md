@@ -25,8 +25,16 @@ or
 
 ### numberOfColums
 
-* type: integer
+* type: `integer`
 * default: random value between `5` and `50`
+
+### blinking
+
+controls the color changing
+
+* type: `boolean`
+* default: `true`
+
 
 
 ## License

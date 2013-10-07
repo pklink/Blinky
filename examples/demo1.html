@@ -11,6 +11,7 @@
 <body>
 
 <h2>Default</h2>
+<p><code>$('#target').blinky();</code></p>
 <div id="target1" style="width: 500px; height: 250px"></div>
 <script type="text/javascript">
     $('#target1').blinky();
@@ -18,6 +19,7 @@
 
 
 <h2>With fixed value of columns</h2>
+<p><code>$('#target').blinky({ numberOfColumns: 5 });</code></p>
 <div id="target2" style="width: 500px; height: 250px"></div>
 <script type="text/javascript">
     $('#target2').blinky({
@@ -26,7 +28,23 @@
 </script>
 
 
+<h2>Disable blinking (color changing)</h2>
+<p><code>$('#target').blinky({ blinking: false });</code></p>
+<div id="target4" style="width: 500px; height: 250px"></div>
+<script type="text/javascript">
+    $('#target4').blinky({
+        blinking: false
+    });
+</script>
+
+
 <h2>Resizing every second</h2>
+<p><pre>
+$('#target').blinky();
+setInterval(function() {
+    $('#target').width(chance.natural({min: 150, max: 600}));
+}, 1000);
+</pre></p>
 <div id="target3" style="width: 500px; height: 250px"></div>
 <script type="text/javascript">
     $('#target3').blinky();
