@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>defaulty</title>
-    <!-- defaulty 0.2.1 -->
+    <!-- defaulty 0.3 -->
     <link rel="stylesheet" href="css/normalize.css" />
     <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
     <script type="text/javascript" src="js/chance.min.js"></script>
@@ -14,25 +14,31 @@
 <script type="text/javascript">
 
     function Defaulty() {
-        this.container        = $('<div />');
-        this.length           = 0;
-        this.elements         = [];
-        this.divider          = chance.natural({ min: 5, max: 50 });
-        this.difference       = 0;
+        this.container              = $('<div />');
+        this.numberOfColumns        = chance.natural({ min: 5, max: 50 });
+
+        // private
+        this._elements                = [];
+        this._numberOfRows            = 0;
+        this._lengthOfElementInPixel  = 0;
+        this._widthDifferenceInPixel  = 0;
+        this._heightDifferenceInPixel = 0;
 
         this.init();
-
     }
 
 
     Defaulty.prototype.calculateLength = function() {
-        var width = $(window).width();
+        var width  = $(window).width();
+        var height = $(window).height();
 
-        this.length     = Math.ceil(width / this.divider);
-        this.difference = this.length * this.divider - width;
+        this._lengthOfElementInPixel  = Math.ceil(width / this.numberOfColumns);
+        this._widthDifferenceInPixel  = this._lengthOfElementInPixel * this.numberOfColumns - width;
+        this._numberOfRows            = Math.ceil(height / this._lengthOfElementInPixel);
+        this._heightDifferenceInPixel = this._lengthOfElementInPixel * this._numberOfRows - height;
 
-        if (this.difference > this.length) {
-            this.divider   += 1;
+        if (this._widthDifferenceInPixel > this._lengthOfElementInPixel) {
+            this.numberOfColumns   += 1;
             this.calculateLength();
         }
     }
@@ -42,27 +48,35 @@
         this.calculateLength();
 
         // create some elements
-        var numberOfElements = Math.ceil($(window).height() / this.length) * this.divider - 1;
+        var numberOfElements = this._numberOfRows * this.numberOfColumns;
 
-        for (var i = 0; i <= numberOfElements; i++) {
-            var isLastElement = false;
+        for (var i = 0; i <= numberOfElements - 1; i++) {
+            var isLastColumn = false;
+            var isLastRow    = false;
 
-            if ( (i + 1) % this.divider == 0) {
-                isLastElement = true;
+            if ( (i + 1) % this.numberOfColumns == 0) {
+                isLastColumn = true;
+            }
+
+            if (i + 1 > numberOfElements - this.numberOfColumns) {
+                isLastRow = true;
             }
 
             // create element
-            var last    = this.elements[i-1];
-            var element = new Element(this.length, this.length);
+            var element = new Element(this._lengthOfElementInPixel, this._lengthOfElementInPixel);
 
             // correct width
-            if (isLastElement) {
-                element.setWidth(this.length - this.difference);
+            if (isLastColumn) {
+                element.jq.width(this._lengthOfElementInPixel - this._widthDifferenceInPixel);
             }
 
+            // correct height
+            if (isLastRow) {
+                element.jq.height(this._lengthOfElementInPixel - this._heightDifferenceInPixel);
+            }
 
-            element.element.appendTo(this.container);
-            this.elements.push(element);
+            element.jq.appendTo(this.container);
+            this._elements.push(element);
         }
 
         this.container.prependTo($('body'));
@@ -72,7 +86,7 @@
     function Element(width, height) {
         this._width    = width;
         this._height   = height;
-        this.element  = $('<div />')
+        this.jq  = $('<div />')
                 .addClass('item')
                 .width(this._width)
                 .height(this._height)
@@ -83,23 +97,18 @@
         // change background color
         this.changeBackgroundColor();
 
+        // set inverval for changing background color
         setInterval($.proxy(this.changeBackgroundColor, this), chance.natural({min: 500, max: 1500}));
 
         // click listener
-        this.element.click($.proxy(function() {
+        this.jq.click($.proxy(function() {
             this.changeBackgroundColor();
         }, this));
     }
 
 
-    Element.prototype.setWidth = function(width) {
-        this._width = width;
-        this.element.width(width);
-    }
-
-
     Element.prototype.changeBackgroundColor = function() {
-        this.element.css('backgroundColor', chance.color());
+        this.jq.css('backgroundColor', chance.color());
     }
 
 
